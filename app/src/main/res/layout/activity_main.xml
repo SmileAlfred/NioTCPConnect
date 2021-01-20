@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btn_connection1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="80dp"
+        android:text="连接1" />
+
+    <Button
+        android:id="@+id/btn_send1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:text="发送1" />
+
+    <Button
+        android:id="@+id/btn_disconnect1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="80dp"
+        android:layout_marginRight="30dp"
+        android:text="断开1" />
+
+    <Button
+        android:id="@+id/btn_connection2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="180dp"
+        android:text="连接2" />
+
+    <Button
+        android:id="@+id/btn_send2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="180dp"
+        android:text="发送2" />
+
+    <Button
+        android:id="@+id/btn_disconnect2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="180dp"
+        android:layout_marginRight="30dp"
+        android:text="断开2" />
+    <EditText
+        android:layout_width="match_parent"
+        android:id="@+id/et_ip"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="280dp"
+        android:layout_marginLeft="30dp"
+        android:text="192.168.1.10"
+        android:textSize="21sp"
+        android:layout_marginRight="30dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="380dp"
+        android:layout_marginLeft="30dp"
+        android:textSize="24sp"
+        android:layout_marginRight="30dp" />
+
+</RelativeLayout>

@@ -5,17 +5,20 @@ import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,14 +26,15 @@ import androidx.core.app.ActivityCompat;
 
 
 import com.example.niotcpconnect.utils.FileUtils;
+import com.example.niotcpconnect.utils.Utils;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * 问题描述：服务器返回的消息，客户端无法显示；
- * 是服务器没有返回？还是客户端没有接收到？
+ * TODO:文件选择器，
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button btn_client_send, btn_server_send;
@@ -52,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final int CLIENTGETMSG = 1, SERVERGETMSG = 2, LOG = 3;
     public TextView tv_content;
     private SimpleDateFormat format;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -188,56 +191,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mTcpClient1.sendMsg(et_content_client.getText().toString());
                 mTcpClient2.sendMsg(et_content_client.getText().toString());
                 break;
+
             case R.id.btn_pickfile:
                 //TODO:选择文件
-                performFileSearch();
+                Utils.ToastUtils(this,"TODO:选择文件");
                 break;
             default:
                 break;
         }
-    }
-
-    //选择文件
-    private void performFileSearch() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        //允许多选 长按多选
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        //不限制选取类型
-        intent.setType("*/*");
-        startActivityForResult(intent, -1);
-    }
-
-    //接收返回值
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case -1:
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    //当单选选了一个文件后返回
-                    if (data.getData() != null) {
-                        handleSingleDocument(data);
-                    } else {
-                        //多选
-                        ClipData clipData = data.getClipData();
-                        if (clipData != null) {
-                            Uri[] uris = new Uri[clipData.getItemCount()];
-                            for (int i = 0; i < clipData.getItemCount(); i++) {
-                                uris[i] = clipData.getItemAt(i).getUri();
-                                Log.i(TAG, "获取到第 " + i + " 个文件目录: " + uris[i]);
-                            }
-                        }
-                    }
-                }
-                break;
-        }
-    }
-
-    //将uri转换为我们需要的path,多选类似
-    private void handleSingleDocument(Intent data) {
-        Uri uri = data.getData();
-        String filePath = FileUtils.getRealPath(MainActivity.this, uri);
-        Log.i(TAG, "获取到 单个 文件目录: " + filePath);
     }
 }

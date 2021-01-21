@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="30dp"
         android:text="连接1" />
 
     <Button
@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="30dp"
         android:text="发送1" />
 
     <Button
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="30dp"
         android:layout_marginRight="30dp"
         android:text="断开1" />
 
@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="100dp"
         android:text="连接2" />
 
     <Button
@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="100dp"
         android:text="发送2" />
 
     <Button
@@ -51,28 +51,109 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="100dp"
         android:layout_marginRight="30dp"
         android:text="断开2" />
-    <EditText
-        android:layout_width="match_parent"
-        android:id="@+id/et_ip"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="280dp"
-        android:layout_marginLeft="30dp"
-        android:text="192.168.1.10"
-        android:textSize="21sp"
-        android:layout_marginRight="30dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:id="@+id/tv_content"
+    <EditText
+        android:id="@+id/et_ip"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="380dp"
         android:layout_marginLeft="30dp"
-        android:textSize="24sp"
-        android:layout_marginRight="30dp" />
+        android:layout_marginTop="160dp"
+        android:layout_marginRight="30dp"
+        android:text="192.168.137.21"
+        android:textSize="21sp" />
+
+    <Button
+        android:id="@+id/btn_pickfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="160dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
+        android:text="选择文件"
+        android:textSize="21sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/rl_input"
+        android:layout_below="@+id/et_ip"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
+            android:padding="5dp" />
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/rl_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/btn_client_send"
+            android:layout_alignBottom="@+id/btn_client_send"
+            android:gravity="center"
+            android:text="客户端发送的内容："
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_client_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="发送" />
+
+
+        <EditText
+            android:id="@+id/et_content_client"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="60dp"
+            android:text="客户端想说什么？"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/btn_server_send"
+            android:layout_alignBottom="@+id/btn_server_send"
+            android:gravity="center"
+            android:text="服务器发送的内容："
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_server_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="120dp"
+            android:text="发送" />
+
+
+        <EditText
+            android:id="@+id/et_content_server"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="160dp"
+            android:text="服务器想说什么？"
+            android:textSize="20sp" />
+    </RelativeLayout>
 
 </RelativeLayout>

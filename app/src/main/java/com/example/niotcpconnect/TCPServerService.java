@@ -2,7 +2,9 @@ package com.example.niotcpconnect;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -15,23 +17,31 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class TCPServerService extends Service {
-    private static final String TAG = "测试："+TCPServerService.class.getSimpleName();
+    private static final String TAG = "测试：" + TCPServerService.class.getSimpleName();
 
-    public final static int SERVER_PORT = 9999;                     // 跟客户端绝定的端口
+    public final static int SERVER_PORT = 9999;         // 跟客户端绝定的端口
 
     private TCPServer mTCPServer;
-    private ThreadPoolExecutor mConnectThreadPool;                  // 总的连接线程池
+    private ThreadPoolExecutor mConnectThreadPool;     // 总的连接线程池
+    private Handler mHandler;
 
     @Override
     public void onCreate() {
         super.onCreate();
         init();
-        initTcpServer();
+    }
+
+    IBinder mBinder = new LocalBinder();
+
+    public class LocalBinder extends Binder {
+        public TCPServerService getServerInstance() {
+            return TCPServerService.this;
+        }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
     @Override
@@ -56,7 +66,7 @@ public class TCPServerService extends Service {
                 new RejectedExecutionHandler() {
                     @Override
                     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-                      Log.i(TAG, "已启动连接，请免重复操作");
+                        Log.i(TAG, "已启动连接，请免重复操作");
                     }
                 }
         );
@@ -70,10 +80,19 @@ public class TCPServerService extends Service {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void run() {
-                mTCPServer = new TCPServer(TCPServerService.this);
+                mTCPServer = new TCPServer(TCPServerService.this, mHandler);
                 mTCPServer.init();
             }
         });
+    }
+
+    public TCPServer getmTCPServer() {
+        return mTCPServer;
+    }
+
+    public void setHandler(Handler handler) {
+        mHandler = handler;
+        if(null == mTCPServer )initTcpServer();
     }
 
     /**

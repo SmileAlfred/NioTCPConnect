@@ -2,9 +2,10 @@ package com.example.niotcpconnect;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
@@ -19,14 +20,17 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class TCPServer {
-    private final static String TAG = "测试："+TCPServer.class.getSimpleName();
+    private final static String TAG = "测试：" + TCPServer.class.getSimpleName();
 
     private String mSendMsg;
     private Selector mSelector;
-    private Context context;
+    private Context mContext;
+    private SelectionKey selectionKey;
+    private Handler mHandler;
 
-    public TCPServer(Context context) {
-        this.context =context;
+    public TCPServer(Context mContext, Handler handler) {
+        this.mHandler = handler;
+        this.mContext = mContext;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -44,14 +48,14 @@ public class TCPServer {
             while (mSelector != null && mSelector.isOpen()) {
                 // 选择一组对应Channel已准备好进行I/O的Key
                 int select = mSelector.select();
-                if (select <=0) {
+                if (select <= 0) {
                     continue;
                 }
                 // 获得Selector已选择的Keys
                 Set<SelectionKey> selectionKeys = mSelector.selectedKeys();
                 Iterator<SelectionKey> iterator = selectionKeys.iterator();
                 while (iterator.hasNext()) {
-                    SelectionKey selectionKey = iterator.next();
+                    selectionKey = iterator.next();
 
                     // 移除当前的key
                     iterator.remove();
@@ -99,15 +103,23 @@ public class TCPServer {
     private void handleRead(SelectionKey selectionKey) throws IOException {
         SocketChannel client = (SocketChannel) selectionKey.channel();
 
-        //读取服务器发送来的数据到缓冲区中
+        //读取 客户端 发送来的数据到缓冲区中
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
         int bytesRead = client.read(byteBuffer);
         if (bytesRead > 0) {
             String inMsg = new String(byteBuffer.array(), 0, bytesRead);
-            // 处理数据
-            responseMsg(selectionKey, inMsg);
-        }
-        else {
+            Log.i(TAG, "handleRead: 服务器接收到客户端发来的消息：" + inMsg);
+
+            //更新UI：服务器界面显示【客户端返回的消息：】
+            Message mMessage = new Message();
+            mMessage.obj = inMsg;
+            mMessage.what = MainActivity.SERVERGETMSG;
+            mHandler.sendMessage(mMessage);
+
+
+            //暂时不必自动回复 服务器发送的 数据
+            //responseMsg(selectionKey, inMsg);
+        } else {
             Log.i(TAG, "服务端 断开跟 客户端(" + client.getRemoteAddress() + ") 的连接");
             client.close();
         }
@@ -130,7 +142,7 @@ public class TCPServer {
     }
 
     /**
-     * 处理数据
+     * 自动回复 客户端 返回的 数据
      *
      * @param selectionKey
      * @param inMsg
@@ -139,7 +151,7 @@ public class TCPServer {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void responseMsg(SelectionKey selectionKey, String inMsg) throws IOException {
         SocketChannel client = (SocketChannel) selectionKey.channel();
-        Toast.makeText(context,inMsg,Toast.LENGTH_SHORT).show();
+        //Utils.ToastUtils(mContext, "服务器收到了消息：" + inMsg);
         Log.i(TAG, "服务端 收到 客户端(" + client.getRemoteAddress() + ") 数据：" + inMsg);
 
         // 估计1亿的AI代码
@@ -147,11 +159,42 @@ public class TCPServer {
         outMsg = outMsg.replace("吗", "");
         outMsg = outMsg.replace("?", "!");
         outMsg = outMsg.replace("？", "!");
-        //sendMsg(selectionKey, outMsg);
+        sendMsg(selectionKey, outMsg);
     }
+
+    private SocketChannel client = null;
 
     /**
      * 发送数据
+     *
+     * @param msg
+     * @throws IOException
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void sendMsg(String msg) {
+        if (null == selectionKey) {
+
+            //更新UI：服务器界面显示【客户端返回的消息：】
+            Message mMessage = new Message();
+            mMessage.obj = "selectionKey == null 发送失败";
+            mMessage.what = MainActivity.LOG;
+            mHandler.sendMessage(mMessage);
+        }
+        mSendMsg = msg;
+        try {
+            if (null == client) {
+                client = (SocketChannel) selectionKey.channel();
+            }
+            client.register(mSelector, SelectionKey.OP_WRITE);
+            mSelector.wakeup();
+            Log.i(TAG, "服务端 给 客户端(" + client.getRemoteAddress() + ") 发送数据：" + msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 服务器 发送 数据
      *
      * @param selectionKey
      * @param msg
@@ -162,8 +205,11 @@ public class TCPServer {
         mSendMsg = msg;
         SocketChannel client = (SocketChannel) selectionKey.channel();
         client.register(mSelector, SelectionKey.OP_WRITE);
-        Log.i(TAG, "服务端 给 客户端(" + client.getRemoteAddress() + ") 发送数据：" + msg);
+        mSelector.wakeup();
+
+        Log.i(TAG, "服务端 给 客户端(" + client.getRemoteAddress() + ") 返回 数据：" + msg);
     }
+
 
     /**
      * 断开连接
